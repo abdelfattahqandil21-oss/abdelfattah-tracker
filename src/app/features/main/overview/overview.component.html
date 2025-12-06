@@ -1,63 +1,29 @@
-<div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-   <!-- Sugar Card with Chart -->
-   <div
-      class="bg-bg-card p-6 rounded-xl shadow-sm border border-border hover:border-primary transition-colors group col-span-1 md:col-span-2">
-      <div class="flex items-center justify-between mb-4">
-         <h3 class="font-display text-lg font-bold text-primary">Sugar Levels</h3>
-         <i class="pi pi-heart text-xl text-primary opacity-50 group-hover:opacity-100 transition-opacity"></i>
-      </div>
-      <div class="grid grid-cols-3 gap-4 h-40">
-         <div class="col-span-1 flex flex-col justify-center">
-            <div>
-               <p class="text-sm text-text-muted uppercase tracking-wider">Average</p>
-               <p class="text-2xl font-bold text-text-main font-display">{{ sugarStats().avg }}</p>
-            </div>
-            <div class="mt-4">
-               <p class="text-sm text-text-muted uppercase tracking-wider">Last</p>
-               <p class="text-2xl font-bold text-text-main font-display">{{ sugarStats().last }}</p>
-            </div>
-         </div>
-         <div class="col-span-2 h-full relative">
-            <canvas #sugarChart></canvas>
-         </div>
-      </div>
-   </div>
+<!-- Alerts -->
+<app-alerts-card [alerts]="service.alerts()" />
 
-   <!-- Tasks Card with Chart -->
-   <div
-      class="bg-bg-card p-6 rounded-xl shadow-sm border border-border hover:border-primary transition-colors group col-span-1 md:col-span-1">
-      <div class="flex items-center justify-between mb-4">
-         <h3 class="font-display text-lg font-bold text-primary">Tasks</h3>
-         <i class="pi pi-check-square text-xl text-primary opacity-50 group-hover:opacity-100 transition-opacity"></i>
-      </div>
-      <div class="h-40 relative flex flex-col items-center justify-center">
-         <canvas #tasksChart></canvas>
-         <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <span class="text-xl font-bold text-text-main font-display">{{ taskStats().completionRate }}%</span>
-         </div>
-      </div>
-   </div>
+<!-- Row 1: Quick Actions + Today's Summary + Trends -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+   <app-quick-actions-card />
+   <app-today-summary-card [summary]="service.todaySummary()" />
+   <app-trends-card [trends]="service.trends()" />
+</div>
 
-   <!-- Evaluations Card -->
-   <div
-      class="bg-bg-card p-6 rounded-xl shadow-sm border border-border hover:border-primary transition-colors group col-span-1 md:col-span-1">
-      <div class="flex items-center justify-between mb-4">
-         <h3 class="font-display text-lg font-bold text-primary">Evaluations</h3>
-         <i class="pi pi-chart-bar text-xl text-primary opacity-50 group-hover:opacity-100 transition-opacity"></i>
-      </div>
-      <div class="space-y-3 h-40 flex flex-col justify-center">
-         <div class="flex justify-between items-center">
-            <span class="text-sm text-text-muted">Activity</span>
-            <span class="font-bold text-text-main">{{ evalStats().activity }}</span>
-         </div>
-         <div class="flex justify-between items-center">
-            <span class="text-sm text-text-muted">Health</span>
-            <span class="font-bold text-text-main">{{ evalStats().health }}</span>
-         </div>
-         <div class="flex justify-between items-center">
-            <span class="text-sm text-text-muted">Productivity</span>
-            <span class="font-bold text-text-main">{{ evalStats().productivity }}</span>
-         </div>
-      </div>
-   </div>
+<!-- Row 2: Sugar Detailed Chart -->
+<div class="mb-6">
+   <app-sugar-chart-card [data]="service.chartData()" [avg]="service.sugarStats().avg"
+      [last]="service.sugarStats().last" />
+</div>
+
+<!-- Row 3: Daily Avg Chart + Calendar Heatmap -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+   <app-avg-chart-card [data]="service.chartData()" />
+   <app-calendar-heatmap-card [days]="service.calendarData()" />
+</div>
+
+<!-- Row 4: Tasks + Evaluations + Notes Preview -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+   <app-tasks-chart-card [completed]="service.taskStats().completed" [pending]="service.taskStats().pending"
+      [completionRate]="service.taskStats().completionRate" />
+   <app-evaluations-card [stats]="service.evalStats()" />
+   <app-notes-preview-card [notes]="service.recentNotes()" />
 </div>

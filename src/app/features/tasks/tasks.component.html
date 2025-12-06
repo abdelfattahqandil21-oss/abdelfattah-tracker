@@ -1,56 +1,41 @@
 <app-header title="Tasks Tracker"></app-header>
 
-<div class="p-4 max-w-md mx-auto">
-  <!-- Controls -->
-  <div class="mb-6 bg-bg-card p-4 rounded-lg shadow border border-border">
-    <div class="flex gap-2 mb-4">
-      <input type="date" [ngModel]="newTaskDate()" (ngModelChange)="newTaskDate.set($event)"
-        class="flex-1 p-2 border border-border rounded bg-bg-input text-text-main">
-      <select [ngModel]="newTaskType()" (ngModelChange)="newTaskType.set($event)"
-        class="p-2 border border-border rounded bg-bg-input text-text-main">
-        <option value="daily">Daily</option>
-        <option value="weekly">Weekly</option>
-        <option value="monthly">Monthly</option>
-      </select>
-    </div>
+<div class="p-6 max-w-6xl mx-auto space-y-6">
+  <!-- Filter Bar with View Toggle -->
+  <app-tasks-filter-bar [activeFilter]="service.activeFilter()" [activeType]="service.activeType()"
+    (filterChange)="onFilterChange($event)" (typeChange)="onTypeChange($event)">
 
-    <div class="flex gap-2">
-      <input type="text" [ngModel]="newTaskTitle()" (ngModelChange)="newTaskTitle.set($event)" placeholder="New task..."
-        class="flex-1 p-2 border border-border rounded bg-bg-input text-text-main placeholder-text-muted"
-        (keyup.enter)="addTask()">
-      <button (click)="addTask()"
-        class="bg-primary text-text-inverse px-4 py-2 rounded hover:bg-primary-dark transition-colors">
-        <i class="pi pi-plus"></i>
+    <!-- View Toggle (projected into filter bar) -->
+    <div class="flex gap-1 bg-bg-app p-1 rounded-lg">
+      <button (click)="viewMode.set('list')" class="px-3 py-1.5 rounded text-sm font-medium transition-colors"
+        [class.bg-bg-card]="viewMode() === 'list'" [class.text-primary]="viewMode() === 'list'"
+        [class.shadow-sm]="viewMode() === 'list'" [class.text-text-muted]="viewMode() !== 'list'">
+        <i class="pi pi-list mr-1"></i> List
+      </button>
+      <button (click)="viewMode.set('kanban')" class="px-3 py-1.5 rounded text-sm font-medium transition-colors"
+        [class.bg-bg-card]="viewMode() === 'kanban'" [class.text-primary]="viewMode() === 'kanban'"
+        [class.shadow-sm]="viewMode() === 'kanban'" [class.text-text-muted]="viewMode() !== 'kanban'">
+        <i class="pi pi-th-large mr-1"></i> Kanban
       </button>
     </div>
-  </div>
+  </app-tasks-filter-bar>
 
-  <!-- List -->
-  <div class="space-y-2">
-    <div *ngFor="let task of filteredTasks()"
-      class="bg-bg-card p-3 rounded shadow border border-border flex items-center justify-between group hover:border-primary transition-colors">
+  <!-- Stats Bar -->
+  <app-tasks-stats-bar [stats]="service.stats()" />
 
-      <div class="flex items-center gap-3">
-        <button (click)="toggleStatus(task)"
-          class="w-6 h-6 rounded border flex items-center justify-center transition-colors"
-          [class.bg-success]="task.status === 'done'" [class.border-border]="task.status !== 'done'"
-          [class.border-success]="task.status === 'done'">
-          <i *ngIf="task.status === 'done'" class="pi pi-check text-text-inverse text-xs"></i>
-        </button>
+  <!-- Quick Add -->
+  <app-tasks-quick-add (taskAdded)="onTaskAdded($event)" />
 
-        <span [class.line-through]="task.status === 'done'" [class.text-text-muted]="task.status === 'done'"
-          [class.text-text-main]="task.status !== 'done'">
-          {{ task.title }}
-        </span>
-      </div>
-
-      <button (click)="deleteTask(task.id)" class="text-error opacity-0 group-hover:opacity-100 transition-opacity">
-        <i class="pi pi-trash"></i>
-      </button>
-    </div>
-
-    <div *ngIf="filteredTasks().length === 0" class="text-center text-text-muted py-8">
-      No tasks for this date
-    </div>
-  </div>
+  <!-- Tasks View -->
+  @if (viewMode() === 'list') {
+  <app-tasks-table [groups]="service.groupedByDate()" (toggle)="onToggle($event)" (delete)="onDelete($event)"
+    (select)="onSelect($event)" />
+  } @else {
+  <app-tasks-kanban [boards]="service.kanbanBoards()" (toggle)="onToggle($event)" (delete)="onDelete($event)"
+    (select)="onSelect($event)" (statusChange)="onStatusChange($event)" />
+  }
 </div>
+
+<!-- Task Detail Modal -->
+<app-task-detail-modal [task]="selectedTask()" (closed)="closeModal()" (toggle)="onToggle($event)"
+  (delete)="onDelete($event)" />

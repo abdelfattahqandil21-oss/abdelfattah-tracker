@@ -5,6 +5,16 @@ import { FormsModule } from '@angular/forms';
 import { HeaderComponent } from "../main/header/header.component";
 import { SugarEntry } from '../../shared/models/sugar-entry.model';
 
+interface DayRow {
+  date: string;
+  breakfastBefore: number | null;
+  breakfastAfter: number | null;
+  lunchBefore: number | null;
+  lunchAfter: number | null;
+  dinnerBefore: number | null;
+  dinnerAfter: number | null;
+}
+
 @Component({
   selector: 'app-sugar-tracker',
   standalone: true,
@@ -16,16 +26,69 @@ import { SugarEntry } from '../../shared/models/sugar-entry.model';
 export class SugarTrackerComponent {
   private service = inject(SugarService);
 
-  // Using the getter from the service
   entries = this.service.entries;
 
   today = signal(new Date().toISOString().split('T')[0]);
 
-  // Computed signal for filtered entries (currently just returns all, but ready for filtering)
   filtered = computed(() => this.entries());
+
+  last14Days = computed(() => {
+    const today = new Date();
+    const fourteenDaysAgo = new Date();
+    fourteenDaysAgo.setDate(today.getDate() - 14);
+
+    return this.entries().filter(e => {
+      const entryDate = new Date(e.date);
+      return entryDate >= fourteenDaysAgo && entryDate <= today;
+    });
+  });
+
+  // Group entries by date for the table
+  groupedByDate = computed(() => {
+    const entries = this.last14Days();
+    const grouped = new Map<string, DayRow>();
+
+    // Get all unique dates and sort them (oldest first)
+    const dates = [...new Set(entries.map(e => e.date))].sort((a, b) =>
+      new Date(a).getTime() - new Date(b).getTime()
+    );
+
+    // Initialize rows for each date
+    dates.forEach(date => {
+      grouped.set(date, {
+        date,
+        breakfastBefore: null,
+        breakfastAfter: null,
+        lunchBefore: null,
+        lunchAfter: null,
+        dinnerBefore: null,
+        dinnerAfter: null
+      });
+    });
+
+    // Fill in the values
+    entries.forEach(entry => {
+      const row = grouped.get(entry.date);
+      if (row) {
+        const key = `${entry.meal}${entry.timing === 'before' ? 'Before' : 'After'}` as keyof DayRow;
+        if (key !== 'date') {
+          (row as any)[key] = entry.value;
+        }
+      }
+    });
+
+    return Array.from(grouped.values());
+  });
 
   addEntry(date: string, meal: 'breakfast' | 'lunch' | 'dinner', timing: 'before' | 'after') {
     const newEntry = this.service.createEntry(date, meal, timing);
+    this.service.addOrUpdate(newEntry);
+  }
+
+  addEntryWithValue(date: string, meal: 'breakfast' | 'lunch' | 'dinner', timing: 'before' | 'after', value: number, note: string = '') {
+    const newEntry = this.service.createEntry(date, meal, timing);
+    newEntry.value = value || null;
+    newEntry.note = note;
     this.service.addOrUpdate(newEntry);
   }
 
