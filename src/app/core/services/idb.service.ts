@@ -16,14 +16,14 @@ export class IDBService {
     }
     console.log(`[IDBService] Opening database '${dbName}' with store '${storeName}'`);
     return new Promise((resolve, reject) => {
-      // Use version 3 to trigger upgrade and create all stores
-      const req = indexedDB.open(dbName, 3);
+      // Use version 4 to trigger upgrade and create all stores
+      const req = indexedDB.open(dbName, 4);
 
       req.onupgradeneeded = () => {
         console.log(`[IDBService] Database upgrade needed for '${dbName}'`);
         const db = req.result;
         // Create all known stores
-        const stores = ['tasks', 'sugar', 'evaluations', 'notes'];
+        const stores = ['tasks', 'sugar-entries', 'evaluations', 'notes'];
         stores.forEach(store => {
           if (!db.objectStoreNames.contains(store)) {
             console.log(`[IDBService] Creating object store '${store}'`);
