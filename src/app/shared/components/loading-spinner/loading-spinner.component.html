@@ -1,1 +1,21 @@
-<p>loading-spinner works!</p>
+@if (fullScreen()) {
+<div
+   class="fixed inset-0 z-50 flex items-center justify-center bg-bg-main/80 backdrop-blur-sm transition-all duration-300">
+   <div
+      class="flex flex-col items-center gap-4 p-6 rounded-2xl bg-bg-card border border-border shadow-xl animate-in fade-in zoom-in duration-300">
+      <div class="relative w-12 h-12">
+         <div class="absolute inset-0 border-4 border-primary/20 rounded-full"></div>
+         <div class="absolute inset-0 border-4 border-primary rounded-full border-t-transparent animate-spin"></div>
+      </div>
+      <span class="text-sm font-medium text-text-muted animate-pulse">{{ message() }}</span>
+   </div>
+</div>
+} @else {
+<div class="flex flex-col items-center justify-center gap-3 p-8 w-full h-full min-h-[200px]">
+   <div class="relative w-10 h-10">
+      <div class="absolute inset-0 border-3 border-primary/20 rounded-full"></div>
+      <div class="absolute inset-0 border-3 border-primary rounded-full border-t-transparent animate-spin"></div>
+   </div>
+   <span class="text-xs font-medium text-text-muted">{{ message() }}</span>
+</div>
+}

@@ -1,43 +1,48 @@
-import { Component, ChangeDetectionStrategy, inject, signal, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { NotesService } from './services/notes.service';
 import { HeaderComponent } from '../main/header/header.component';
+import { NoteEditorComponent } from './components/note-editor.component';
+import { NoteListComponent } from './components/note-list.component';
+import { NotesPageService } from './services/notes-page.service';
+import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-notes',
   standalone: true,
-  imports: [CommonModule, FormsModule, HeaderComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    HeaderComponent,
+    NoteEditorComponent,
+    NoteListComponent,
+    LoadingSpinnerComponent
+  ],
   templateUrl: './notes.component.html',
   styleUrl: './notes.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class NotesComponent {
-  private service = inject(NotesService);
-  notes = this.service.notes;
+export class NotesComponent implements OnInit {
+  protected service = inject(NotesPageService);
+  isLoading = signal(true);
 
-  newDate = signal(new Date().toISOString().split('T')[0]);
-  newContent = signal('');
-
-  filteredNotes = computed(() => {
-    return this.notes().filter(n => n.date === this.newDate());
-  });
-
-  addNote() {
-    if (!this.newContent()) return;
-
-    const note = this.service.createNote(
-      this.newDate(),
-      this.newContent()
-    );
-
-    this.service.addOrUpdate(note);
-    this.newContent.set('');
+  ngOnInit() {
+    setTimeout(() => {
+      this.isLoading.set(false);
+    }, 400);
   }
 
-  deleteNote(id: string) {
-    if (confirm('Are you sure?')) {
-      this.service.delete(id);
+  onDateChange(date: string) {
+    this.service.setDate(date);
+  }
+
+  onSaveNote(content: string) {
+    this.service.addNote(content);
+  }
+
+  onDeleteNote(id: string) {
+    if (confirm('Are you sure you want to delete this note?')) {
+      this.service.deleteNote(id);
     }
   }
 }

@@ -1,63 +1,28 @@
 <app-header title="Daily Evaluations"></app-header>
 
-<div class="p-4 max-w-md mx-auto">
-   <!-- Controls -->
-   <div class="mb-6 bg-bg-card p-4 rounded-lg shadow border border-border space-y-4">
-      <div class="flex gap-2">
-         <input type="date" [ngModel]="newDate()" (ngModelChange)="newDate.set($event)"
-            class="flex-1 p-2 border border-border rounded bg-bg-input text-text-main">
-         <select [ngModel]="newType()" (ngModelChange)="newType.set($event)"
-            class="p-2 border border-border rounded bg-bg-input text-text-main">
-            <option value="activity">Activity</option>
-            <option value="health">Health</option>
-            <option value="productivity">Productivity</option>
-         </select>
-      </div>
+<div class="p-6 max-w-5xl mx-auto space-y-6">
+   @if (isLoading()) {
+   <app-loading-spinner [fullScreen]="false" message="Loading Evaluations..." />
+   } @else {
+   <!-- Filter Bar -->
+   <app-eval-filter-bar [activePeriod]="service.filterPeriod()"
+      (periodChange)="onPeriodChange($event)"></app-eval-filter-bar>
 
-      <div class="flex items-center gap-2">
-         <label class="text-sm font-medium w-12 text-text-main">Score:</label>
-         <input type="range" min="1" max="10" [ngModel]="newScore()" (ngModelChange)="newScore.set($event)"
-            class="flex-1 accent-primary">
-         <span class="w-8 text-center font-bold" [ngClass]="getScoreColor(newScore())">
-            {{ newScore() }}
-         </span>
-      </div>
-
-      <div class="flex gap-2">
-         <input type="text" [ngModel]="newNotes()" (ngModelChange)="newNotes.set($event)"
-            placeholder="Notes (optional)..."
-            class="flex-1 p-2 border border-border rounded bg-bg-input text-text-main placeholder-text-muted"
-            (keyup.enter)="addEvaluation()">
-         <button (click)="addEvaluation()"
-            class="bg-primary text-text-inverse px-4 py-2 rounded hover:bg-primary-dark transition-colors">
-            <i class="pi pi-plus"></i>
-         </button>
-      </div>
+   <!-- Stats Cards -->
+   <div class="animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <app-eval-stats-cards [stats]="service.stats()"></app-eval-stats-cards>
    </div>
 
-   <!-- List -->
-   <div class="space-y-2">
-      <div *ngFor="let eval of filteredEvaluations()"
-         class="bg-bg-card p-3 rounded shadow border border-border flex items-center justify-between group hover:border-primary transition-colors">
-
-         <div class="flex flex-col">
-            <div class="flex items-center gap-2">
-               <span class="font-medium capitalize text-text-main">{{ eval.type }}</span>
-               <span class="font-bold" [ngClass]="getScoreColor(eval.score)">
-                  {{ eval.score }}/10
-               </span>
-            </div>
-            <span *ngIf="eval.notes" class="text-sm text-text-muted">{{ eval.notes }}</span>
-         </div>
-
-         <button (click)="deleteEvaluation(eval.id)"
-            class="text-error opacity-0 group-hover:opacity-100 transition-opacity">
-            <i class="pi pi-trash"></i>
-         </button>
-      </div>
-
-      <div *ngIf="filteredEvaluations().length === 0" class="text-center text-text-muted py-8">
-         No evaluations for this date
-      </div>
+   <!-- Quick Add -->
+   <div class="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
+      <app-eval-quick-add [selectedDate]="service.selectedDate()" [isEvaluated]="service.isEvaluated()"
+         (dateChange)="onDateChange($event)" (evalAdded)="onEvalAdded($event)" />
    </div>
+
+   <div class="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
+      <app-eval-history-table [days]="service.dailyBreakdown()" [showPagination]="service.filterPeriod() === 'week'"
+         [weekLabel]="service.currentWeekRange().label" (scoreChanged)="onScoreChanged($event)" (next)="onNextWeek()"
+         (prev)="onPrevWeek()" />
+   </div>
+   }
 </div>

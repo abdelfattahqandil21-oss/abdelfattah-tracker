@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, OnInit } from '@angular/core';
 import { HeaderComponent } from '../main/header/header.component';
 import { TasksPageService, FilterType } from './services/tasks-page.service';
 import { TasksFilterBarComponent } from './components/tasks-filter-bar.component';
@@ -8,6 +8,7 @@ import { TasksTableComponent } from './components/tasks-table.component';
 import { TasksKanbanComponent } from './components/tasks-kanban.component';
 import { TaskDetailModalComponent } from './components/task-detail-modal.component';
 import { Task, TaskType, TaskStatus } from '../../shared/models/task.model';
+import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-tasks',
@@ -19,16 +20,24 @@ import { Task, TaskType, TaskStatus } from '../../shared/models/task.model';
     TasksQuickAddComponent,
     TasksTableComponent,
     TasksKanbanComponent,
-    TaskDetailModalComponent
+    TaskDetailModalComponent,
+    LoadingSpinnerComponent
   ],
   templateUrl: './tasks.component.html',
   styleUrl: './tasks.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TasksComponent {
+export class TasksComponent implements OnInit {
   protected service = inject(TasksPageService);
   selectedTask = signal<Task | null>(null);
   viewMode = signal<'list' | 'kanban'>('kanban');
+  isLoading = signal(true);
+
+  ngOnInit() {
+    setTimeout(() => {
+      this.isLoading.set(false);
+    }, 600);
+  }
 
   onFilterChange(filter: FilterType) {
     this.service.setFilter(filter);

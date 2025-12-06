@@ -30,7 +30,7 @@
 body {
    background-color: var(--color-bg-app);
    color: var(--color-text-main);
-   font-family: var(--font-body);
+   font-family: var(--font-body) !important;
    transition: background-color 0.3s ease, color 0.3s ease;
 }
 

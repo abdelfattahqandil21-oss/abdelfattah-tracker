@@ -14,19 +14,42 @@
 
       <!-- Desktop Navigation -->
       <nav class="hidden md:flex space-x-8">
-        <a *ngFor="let item of navItems" [routerLink]="item.path" routerLinkActive="text-primary border-primary"
+        @for (item of navItems; track $index) {
+        <a [routerLink]="item.path" routerLinkActive="text-primary border-primary"
           [routerLinkActiveOptions]="{exact: true}"
           class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-bold uppercase tracking-widest text-text-muted hover:text-primary hover:border-primary-dark transition-all duration-300 font-body">
           {{ item.label }}
         </a>
+        }
       </nav>
 
       <!-- Mobile Menu Button -->
       <div class="md:hidden flex items-center">
-        <button type="button" class="text-text-main hover:text-primary focus:outline-none">
-          <i class="pi pi-bars text-2xl"></i>
+        <button type="button" (click)="toggleMenu()"
+          class="text-text-main hover:text-primary focus:outline-none p-2 rounded-md transition-colors duration-200"
+          [class.menu-open]="isMenuOpen()">
+          <div class="menu-icon-wrapper">
+            <i class="pi" [class.pi-bars]="!isMenuOpen()" [class.pi-times]="isMenuOpen()" style="font-size: 1.5rem"></i>
+          </div>
         </button>
       </div>
     </div>
   </div>
+
+  <!-- Mobile Menu Dropdown -->
+  @if (isMenuOpen()) {
+  <div
+    class="md:hidden bg-bg-card border-t border-border absolute w-full left-0 shadow-lg animate-slide-down origin-top">
+    <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+      @for (item of navItems; track $index) {
+      <a [routerLink]="item.path" (click)="closeMenu()"
+        routerLinkActive="bg-primary/10 text-primary border-l-4 border-primary"
+        [routerLinkActiveOptions]="{exact: true}"
+        class="block px-3 py-3 rounded-r-md text-base font-medium text-text-main hover:text-primary hover:bg-bg-app transition-all duration-200">
+        {{ item.label }}
+      </a>
+      }
+    </div>
+  </div>
+  }
 </header>

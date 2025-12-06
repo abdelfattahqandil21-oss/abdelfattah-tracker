@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, OnInit } from '@angular/core';
 import { OverviewService } from './services/overview.service';
 import { AlertsCardComponent } from './components/alerts-card.component';
 import { QuickActionsCardComponent } from './components/quick-actions-card.component';
@@ -10,6 +10,7 @@ import { CalendarHeatmapCardComponent } from './components/calendar-heatmap-card
 import { TasksChartCardComponent } from './components/tasks-chart-card.component';
 import { EvaluationsCardComponent } from './components/evaluations-card.component';
 import { NotesPreviewCardComponent } from './components/notes-preview-card.component';
+import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-overview',
@@ -24,12 +25,21 @@ import { NotesPreviewCardComponent } from './components/notes-preview-card.compo
     CalendarHeatmapCardComponent,
     TasksChartCardComponent,
     EvaluationsCardComponent,
-    NotesPreviewCardComponent
+    NotesPreviewCardComponent,
+    LoadingSpinnerComponent
   ],
   templateUrl: './overview.component.html',
   styleUrl: './overview.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class OverviewComponent {
+export class OverviewComponent implements OnInit {
   protected service = inject(OverviewService);
+  isLoading = signal(true);
+
+  ngOnInit() {
+    // Simulate loading delay for smooth UX
+    setTimeout(() => {
+      this.isLoading.set(false);
+    }, 800);
+  }
 }

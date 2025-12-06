@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
@@ -10,6 +10,8 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
   styleUrl: './header.component.css',
 })
 export class HeaderComponent {
+  isMenuOpen = signal(false);
+
   navItems = [
     { path: '/main', label: 'Dashboard' },
     { path: '/sugar-tracker', label: 'Sugar' },
@@ -17,4 +19,12 @@ export class HeaderComponent {
     { path: '/evaluations', label: 'Evaluations' },
     { path: '/notes', label: 'Notes' },
   ];
+
+  toggleMenu() {
+    this.isMenuOpen.update(v => !v);
+  }
+
+  closeMenu() {
+    this.isMenuOpen.set(false);
+  }
 }

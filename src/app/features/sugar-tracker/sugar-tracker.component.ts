@@ -1,9 +1,10 @@
-import { Component, ChangeDetectionStrategy, computed, inject, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, computed, inject, signal, OnInit } from '@angular/core';
 import { SugarService } from './services/sugar.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HeaderComponent } from "../main/header/header.component";
 import { SugarEntry } from '../../shared/models/sugar-entry.model';
+import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner.component';
 
 interface DayRow {
   date: string;
@@ -18,17 +19,24 @@ interface DayRow {
 @Component({
   selector: 'app-sugar-tracker',
   standalone: true,
-  imports: [CommonModule, FormsModule, HeaderComponent],
+  imports: [CommonModule, FormsModule, HeaderComponent, LoadingSpinnerComponent],
   templateUrl: './sugar-tracker.component.html',
   styleUrls: ['./sugar-tracker.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SugarTrackerComponent {
+export class SugarTrackerComponent implements OnInit {
   private service = inject(SugarService);
+  isLoading = signal(true);
 
   entries = this.service.entries;
 
   today = signal(new Date().toISOString().split('T')[0]);
+
+  ngOnInit() {
+    setTimeout(() => {
+      this.isLoading.set(false);
+    }, 500);
+  }
 
   filtered = computed(() => this.entries());
 

@@ -1,6 +1,9 @@
 <app-header title="Tasks Tracker"></app-header>
 
 <div class="p-6 max-w-6xl mx-auto space-y-6">
+  @if (isLoading()) {
+  <app-loading-spinner [fullScreen]="false" message="Loading Tasks..." />
+  } @else {
   <!-- Filter Bar with View Toggle -->
   <app-tasks-filter-bar [activeFilter]="service.activeFilter()" [activeType]="service.activeType()"
     (filterChange)="onFilterChange($event)" (typeChange)="onTypeChange($event)">
@@ -21,18 +24,25 @@
   </app-tasks-filter-bar>
 
   <!-- Stats Bar -->
-  <app-tasks-stats-bar [stats]="service.stats()" />
+  <div class="animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <app-tasks-stats-bar [stats]="service.stats()" />
+  </div>
 
   <!-- Quick Add -->
-  <app-tasks-quick-add (taskAdded)="onTaskAdded($event)" />
+  <div class="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
+    <app-tasks-quick-add (taskAdded)="onTaskAdded($event)" />
+  </div>
 
   <!-- Tasks View -->
-  @if (viewMode() === 'list') {
-  <app-tasks-table [groups]="service.groupedByDate()" (toggle)="onToggle($event)" (delete)="onDelete($event)"
-    (select)="onSelect($event)" />
-  } @else {
-  <app-tasks-kanban [boards]="service.kanbanBoards()" (toggle)="onToggle($event)" (delete)="onDelete($event)"
-    (select)="onSelect($event)" (statusChange)="onStatusChange($event)" />
+  <div class="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
+    @if (viewMode() === 'list') {
+    <app-tasks-table [groups]="service.groupedByDate()" (toggle)="onToggle($event)" (delete)="onDelete($event)"
+      (select)="onSelect($event)" />
+    } @else {
+    <app-tasks-kanban [boards]="service.kanbanBoards()" (toggle)="onToggle($event)" (delete)="onDelete($event)"
+      (select)="onSelect($event)" (statusChange)="onStatusChange($event)" />
+    }
+  </div>
   }
 </div>
 

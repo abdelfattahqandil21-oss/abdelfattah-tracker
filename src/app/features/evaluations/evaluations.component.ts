@@ -1,53 +1,59 @@
-import { Component, ChangeDetectionStrategy, inject, signal, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { EvaluationsService } from './services/evaluations.service';
+import { Component, ChangeDetectionStrategy, inject, signal, OnInit } from '@angular/core';
+import { EvaluationsPageService, FilterPeriod } from './services/evaluations-page.service';
 import { EvaluationType } from '../../shared/models/evaluation.model';
 import { HeaderComponent } from '../main/header/header.component';
+import { EvalStatsCardsComponent } from './components/eval-stats-cards.component';
+import { EvalQuickAddComponent } from './components/eval-quick-add.component';
+import { EvalHistoryTableComponent } from './components/eval-history-table.component';
+import { EvalFilterBarComponent } from './components/eval-filter-bar.component';
+import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-evaluations',
   standalone: true,
-  imports: [CommonModule, FormsModule, HeaderComponent],
+  imports: [
+    HeaderComponent,
+    EvalStatsCardsComponent,
+    EvalQuickAddComponent,
+    EvalHistoryTableComponent,
+    EvalFilterBarComponent,
+    LoadingSpinnerComponent
+  ],
   templateUrl: './evaluations.component.html',
   styleUrl: './evaluations.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class EvaluationsComponent {
-  private service = inject(EvaluationsService);
-  evaluations = this.service.evaluations;
+export class EvaluationsComponent implements OnInit {
+  protected service = inject(EvaluationsPageService);
+  isLoading = signal(true);
 
-  newDate = signal(new Date().toISOString().split('T')[0]);
-  newType = signal<EvaluationType>('productivity');
-  newScore = signal(5);
-  newNotes = signal('');
-
-  filteredEvaluations = computed(() => {
-    return this.evaluations().filter(e => e.date === this.newDate());
-  });
-
-  addEvaluation() {
-    const evaluation = this.service.createEvaluation(
-      this.newDate(),
-      this.newType(),
-      this.newScore(),
-      this.newNotes()
-    );
-
-    this.service.addOrUpdate(evaluation);
-    this.newNotes.set('');
-    this.newScore.set(5);
+  ngOnInit() {
+    setTimeout(() => {
+      this.isLoading.set(false);
+    }, 600);
   }
 
-  deleteEvaluation(id: string) {
-    if (confirm('Are you sure?')) {
-      this.service.delete(id);
-    }
+  onDateChange(date: string) {
+    this.service.setDate(date);
   }
 
-  getScoreColor(score: number): string {
-    if (score >= 8) return 'text-green-600';
-    if (score >= 5) return 'text-yellow-600';
-    return 'text-red-600';
+  onPeriodChange(period: FilterPeriod) {
+    this.service.setPeriod(period);
+  }
+
+  onEvalAdded(event: { type: EvaluationType; score: number }) {
+    this.service.addEvaluation(event.type, event.score);
+  }
+
+  onScoreChanged(event: { date: string; type: EvaluationType; score: number }) {
+    this.service.updateEvaluationScore(event.date, event.type, event.score);
+  }
+
+  onNextWeek() {
+    this.service.nextWeek();
+  }
+
+  onPrevWeek() {
+    this.service.prevWeek();
   }
 }

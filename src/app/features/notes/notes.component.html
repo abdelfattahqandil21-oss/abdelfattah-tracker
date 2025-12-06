@@ -1,40 +1,27 @@
 <app-header title="Daily Notes"></app-header>
 
-<div class="p-4 max-w-md mx-auto">
-   <!-- Controls -->
-   <div class="mb-6 bg-bg-card p-4 rounded-lg shadow border border-border space-y-4">
-      <div class="flex gap-2">
-         <input type="date" [ngModel]="newDate()" (ngModelChange)="newDate.set($event)"
-            class="flex-1 p-2 border border-border rounded bg-bg-input text-text-main">
+<div class="p-6 max-w-2xl mx-auto space-y-6">
+  @if (isLoading()) {
+    <app-loading-spinner [fullScreen]="false" message="Loading Notes..." />
+  } @else {
+    <!-- Date Picker -->
+    <div class="bg-bg-card p-4 rounded-lg shadow-sm border border-border flex items-center justify-between animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div class="flex items-center gap-3">
+        <i class="pi pi-calendar text-primary text-xl"></i>
+        <span class="font-medium text-text-main">Selected Date</span>
       </div>
+      <input type="date" [ngModel]="service.selectedDate()" (ngModelChange)="onDateChange($event)"
+        class="p-2 border border-border rounded-lg bg-bg-input text-text-main focus:ring-2 focus:ring-primary focus:border-transparent outline-none">
+    </div>
 
-      <div class="flex flex-col gap-2">
-         <textarea [ngModel]="newContent()" (ngModelChange)="newContent.set($event)"
-            placeholder="Write your note here..."
-            class="w-full p-2 border border-border rounded min-h-[100px] bg-bg-input text-text-main placeholder-text-muted"></textarea>
-         <button (click)="addNote()"
-            class="bg-warning text-text-inverse px-4 py-2 rounded hover:bg-yellow-600 self-end flex items-center gap-2 transition-colors">
-            <i class="pi pi-save"></i>
-            Save Note
-         </button>
-      </div>
-   </div>
+    <!-- Editor -->
+    <div class="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
+      <app-note-editor (save)="onSaveNote($event)" />
+    </div>
 
-   <!-- List -->
-   <div class="space-y-2">
-      <div *ngFor="let note of filteredNotes()"
-         class="bg-bg-card p-3 rounded shadow border border-border flex items-center justify-between group hover:border-warning transition-colors">
-
-         <p class="text-text-main whitespace-pre-wrap">{{ note.content }}</p>
-
-         <button (click)="deleteNote(note.id)"
-            class="text-error opacity-0 group-hover:opacity-100 transition-opacity ml-2">
-            <i class="pi pi-trash"></i>
-         </button>
-      </div>
-
-      <div *ngIf="filteredNotes().length === 0" class="text-center text-text-muted py-8">
-         No notes for this date
-      </div>
-   </div>
+    <!-- List -->
+    <div class="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
+      <app-note-list [notes]="service.filteredNotes()" (delete)="onDeleteNote($event)" />
+    </div>
+  }
 </div>

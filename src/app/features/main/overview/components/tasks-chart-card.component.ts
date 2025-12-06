@@ -1,5 +1,5 @@
-import { Component, ChangeDetectionStrategy, input, ViewChild, ElementRef, AfterViewInit, effect } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, ChangeDetectionStrategy, input, ViewChild, ElementRef, AfterViewInit, effect, PLATFORM_ID, inject } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Chart, ChartConfiguration, registerables } from 'chart.js';
 
@@ -32,6 +32,7 @@ export class TasksChartCardComponent implements AfterViewInit {
 
    @ViewChild('chartCanvas') chartRef!: ElementRef<HTMLCanvasElement>;
    private chart: any;
+   private platformId = inject(PLATFORM_ID);
 
    constructor() {
       effect(() => {
@@ -45,7 +46,9 @@ export class TasksChartCardComponent implements AfterViewInit {
    }
 
    ngAfterViewInit() {
-      setTimeout(() => this.initChart(), 100);
+      if (isPlatformBrowser(this.platformId)) {
+         setTimeout(() => this.initChart(), 100);
+      }
    }
 
    private initChart() {

@@ -1,29 +1,68 @@
+@if (isLoading()) {
+<app-loading-spinner [fullScreen]="false" message="Loading Dashboard..." />
+} @else {
 <!-- Alerts -->
 <app-alerts-card [alerts]="service.alerts()" />
 
 <!-- Row 1: Quick Actions + Today's Summary + Trends -->
+@defer (on viewport) {
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 animate-in fade-in duration-500">
+   <app-quick-actions-card />
+   <app-today-summary-card [summary]="service.todaySummary()" />
+   <app-trends-card [trends]="service.trends()" />
+</div>
+}
+@placeholder {
 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
    <app-quick-actions-card />
    <app-today-summary-card [summary]="service.todaySummary()" />
    <app-trends-card [trends]="service.trends()" />
 </div>
-
+}
 <!-- Row 2: Sugar Detailed Chart -->
+@defer (on viewport) {
+<div class="mb-6 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
+   <app-sugar-chart-card [data]="service.chartData()" [avg]="service.sugarStats().avg"
+      [last]="service.sugarStats().last" />
+</div>
+}
+@placeholder {
 <div class="mb-6">
    <app-sugar-chart-card [data]="service.chartData()" [avg]="service.sugarStats().avg"
       [last]="service.sugarStats().last" />
 </div>
+}
 
 <!-- Row 3: Daily Avg Chart + Calendar Heatmap -->
+@defer (on viewport) {
+<div
+   class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
+   <app-avg-chart-card [data]="service.chartData()" />
+   <app-calendar-heatmap-card [days]="service.calendarData()" />
+</div>
+}
+@placeholder {
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
    <app-avg-chart-card [data]="service.chartData()" />
    <app-calendar-heatmap-card [days]="service.calendarData()" />
 </div>
+}
 
 <!-- Row 4: Tasks + Evaluations + Notes Preview -->
+@defer (on viewport) {
+<div
+   class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
+   <app-tasks-chart-card [completed]="service.taskStats().completed" [pending]="service.taskStats().pending"
+      [completionRate]="service.taskStats().completionRate" />
+   <app-evaluations-card [stats]="service.evalStats()" />
+   <app-notes-preview-card [notes]="service.recentNotes()" />
+</div>
+}@placeholder {
 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
    <app-tasks-chart-card [completed]="service.taskStats().completed" [pending]="service.taskStats().pending"
       [completionRate]="service.taskStats().completionRate" />
    <app-evaluations-card [stats]="service.evalStats()" />
    <app-notes-preview-card [notes]="service.recentNotes()" />
 </div>
+}
+}
