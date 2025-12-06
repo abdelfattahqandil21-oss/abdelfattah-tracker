@@ -1,0 +1,39 @@
+:root {
+   /* Custom Luxury Palette - Light Mode Only */
+
+   /* Palette from User: #1b1a16 #2e2b25 #514e47 #eee8df #99948d */
+
+   /* Primary Brand Color: Dark Greenish Grey */
+   --color-primary: #514e47;
+   --color-primary-dark: #2e2b25;
+
+   /* Secondary: Dark Brownish Grey */
+   --color-secondary: #2e2b25;
+
+   /* Functional Colors - Muted to fit the theme */
+   --color-success: #514e47;
+   /* Using primary for success to keep it minimal/luxury */
+   --color-warning: #99948d;
+   /* Using muted for warning */
+   --color-error: #8B0000;
+   /* Deep Red (kept distinct for safety) */
+
+   /* Backgrounds & Surfaces */
+   --color-bg-app: #eee8df;
+   /* Cream */
+   --color-bg-card: #ffffff;
+   /* White cards for contrast */
+   --color-bg-input: #fcfbf9;
+
+   /* Text */
+   --color-text-main: #1b1a16;
+   /* Almost Black */
+   --color-text-muted: #99948d;
+   /* Greyish Beige */
+   --color-text-inverse: #eee8df;
+
+   /* Borders */
+   --color-border: #99948d;
+}
+
+/* No Dark Mode Media Query as requested */

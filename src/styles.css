@@ -1,1 +1,49 @@
-/* You can add global styles to this file, and also import other style files */
+@import "tailwindcss";
+@import "primeicons/primeicons.css";
+@import "./styles/theme.css";
+
+@theme {
+   --color-primary: var(--color-primary);
+   --color-primary-dark: var(--color-primary-dark);
+   --color-secondary: var(--color-secondary);
+
+   --color-success: var(--color-success);
+   --color-warning: var(--color-warning);
+   --color-error: var(--color-error);
+
+   --color-bg-app: var(--color-bg-app);
+   --color-bg-card: var(--color-bg-card);
+   --color-bg-input: var(--color-bg-input);
+
+   --color-text-main: var(--color-text-main);
+   --color-text-muted: var(--color-text-muted);
+   --color-text-inverse: var(--color-text-inverse);
+
+   --color-border: var(--color-border);
+
+   /* Font Families */
+   --font-display: 'Cinzel', serif;
+   --font-script: 'Pinyon Script', cursive;
+   --font-body: 'Montserrat', sans-serif;
+}
+
+body {
+   background-color: var(--color-bg-app);
+   color: var(--color-text-main);
+   font-family: var(--font-body);
+   transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.font-display {
+   font-family: var(--font-display);
+}
+
+.font-script {
+   font-family: var(--font-script);
+}
