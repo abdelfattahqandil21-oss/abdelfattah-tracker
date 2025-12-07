@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, input, ViewChild, ElementRef, AfterViewInit, effect, PLATFORM_ID, inject } from '@angular/core';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Chart, ChartConfiguration, registerables } from 'chart.js';
 import { ChartData } from '../services/overview.service';
 
@@ -43,9 +43,7 @@ export class AvgChartCardComponent implements AfterViewInit {
    }
 
    ngAfterViewInit() {
-      if (isPlatformBrowser(this.platformId)) {
-         setTimeout(() => this.initChart(), 100);
-      }
+      setTimeout(() => this.initChart(), 100);
    }
 
    private getColors(values: (number | null)[]) {

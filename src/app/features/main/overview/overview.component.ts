@@ -37,7 +37,6 @@ export class OverviewComponent implements OnInit {
   isLoading = signal(true);
 
   ngOnInit() {
-    // Simulate loading delay for smooth UX
     setTimeout(() => {
       this.isLoading.set(false);
     }, 800);

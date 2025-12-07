@@ -1,19 +1,10 @@
-import { Injectable, PLATFORM_ID, inject } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
+import { Injectable } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class IDBService {
   private db: IDBDatabase | null = null;
-  private platformId = inject(PLATFORM_ID);
-
-  get isBrowser(): boolean {
-    return isPlatformBrowser(this.platformId);
-  }
 
   open(dbName: string, storeName: string): Promise<IDBDatabase | null> {
-    if (!this.isBrowser) {
-      return Promise.resolve(null);
-    }
     console.log(`[IDBService] Opening database '${dbName}' with store '${storeName}'`);
     return new Promise((resolve, reject) => {
       // Use version 4 to trigger upgrade and create all stores
@@ -46,7 +37,6 @@ export class IDBService {
   }
 
   add<T>(storeName: string, value: T): Promise<void> {
-    if (!this.isBrowser || !this.db) return Promise.resolve();
     console.log(`[IDBService] Adding to store '${storeName}':`, value);
     return new Promise((resolve, reject) => {
       try {
@@ -76,7 +66,6 @@ export class IDBService {
   }
 
   update<T>(storeName: string, value: T): Promise<void> {
-    if (!this.isBrowser || !this.db) return Promise.resolve();
     console.log(`[IDBService] Updating in store '${storeName}':`, value);
     return new Promise((resolve, reject) => {
       try {
@@ -106,7 +95,6 @@ export class IDBService {
   }
 
   delete(storeName: string, id: string): Promise<void> {
-    if (!this.isBrowser || !this.db) return Promise.resolve();
     console.log(`[IDBService] Deleting from store '${storeName}' with id '${id}'`);
     return new Promise((resolve, reject) => {
       try {
@@ -136,7 +124,6 @@ export class IDBService {
   }
 
   getAll<T>(storeName: string): Promise<T[]> {
-    if (!this.isBrowser || !this.db) return Promise.resolve([]);
     console.log(`[IDBService] Getting all from '${storeName}'`);
     return new Promise((resolve, reject) => {
       try {

@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, input, ViewChild, ElementRef, AfterViewInit, effect, PLATFORM_ID, inject } from '@angular/core';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Chart, ChartConfiguration, registerables } from 'chart.js';
 import { ChartData } from '../services/overview.service';
 
@@ -32,7 +32,6 @@ export class SugarChartCardComponent implements AfterViewInit {
 
    @ViewChild('chartCanvas') chartRef!: ElementRef<HTMLCanvasElement>;
    private chart: Chart | undefined;
-   private platformId = inject(PLATFORM_ID);
 
    constructor() {
       effect(() => {
@@ -44,9 +43,7 @@ export class SugarChartCardComponent implements AfterViewInit {
    }
 
    ngAfterViewInit() {
-      if (isPlatformBrowser(this.platformId)) {
-         setTimeout(() => this.initChart(), 100);
-      }
+      setTimeout(() => this.initChart(), 100);
    }
 
    private initChart() {
