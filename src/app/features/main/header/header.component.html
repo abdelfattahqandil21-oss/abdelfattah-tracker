@@ -1,35 +1,35 @@
 <header class="bg-bg-card shadow-sm border-b border-border sticky top-0 z-50">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex justify-between items-center h-20">
+  <div class="w-full max-w-screen-2xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 xl:px-12">
+    <div class="flex justify-between items-center h-16 sm:h-20">
       <!-- Logo -->
       <div class="shrink-0 flex items-center">
         <a routerLink="/" class="flex items-center gap-2 group">
           <span
-            class="font-display text-2xl font-bold text-primary tracking-wider group-hover:text-primary-dark transition-colors">
+            class="font-display text-lg sm:text-xl md:text-2xl font-bold text-primary tracking-wider group-hover:text-primary-dark transition-colors">
             Abdelfattah
           </span>
-          <span class="font-script text-3xl text-text-main ml-1" style="margin-top: -5px;">Tracker</span>
+          <span class="font-script text-xl sm:text-2xl md:text-3xl text-text-main ml-1" style="margin-top: -5px;">Tracker</span>
         </a>
       </div>
 
       <!-- Desktop Navigation -->
-      <nav class="hidden md:flex space-x-8">
+      <nav class="hidden lg:flex space-x-6 xl:space-x-8">
         @for (item of navItems; track $index) {
-        <a [routerLink]="item.path" routerLinkActive="text-primary border-primary"
+        <a [routerLink]="item.path" routerLinkActive="text-primary border-primary bg-primary/10 rounded-md shadow-sm px-3 py-1 animate-slide-down animate-on-scroll"
           [routerLinkActiveOptions]="{exact: true}"
-          class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-bold uppercase tracking-widest text-text-muted hover:text-primary hover:border-primary-dark transition-all duration-300 font-body">
+          class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-xs sm:text-sm font-bold uppercase tracking-widest text-text-muted hover:text-primary hover:border-primary-dark transition-all duration-300 font-body">
           {{ item.label }}
         </a>
         }
       </nav>
 
       <!-- Mobile Menu Button -->
-      <div class="md:hidden flex items-center">
+      <div class="lg:hidden flex items-center">
         <button type="button" (click)="toggleMenu()"
-          class="text-text-main hover:text-primary focus:outline-none p-2 rounded-md transition-colors duration-200"
+          class="text-text-main hover:text-primary focus:outline-none p-2 sm:p-3 rounded-md transition-colors duration-200"
           [class.menu-open]="isMenuOpen()">
           <div class="menu-icon-wrapper">
-            <i class="pi" [class.pi-bars]="!isMenuOpen()" [class.pi-times]="isMenuOpen()" style="font-size: 1.5rem"></i>
+            <i class="pi text-[1.25rem] sm:text-[1.5rem]" [class.pi-bars]="!isMenuOpen()" [class.pi-times]="isMenuOpen()"></i>
           </div>
         </button>
       </div>
@@ -39,13 +39,13 @@
   <!-- Mobile Menu Dropdown -->
   @if (isMenuOpen()) {
   <div
-    class="md:hidden bg-bg-card border-t border-border absolute w-full left-0 shadow-lg animate-slide-down origin-top">
+    class="lg:hidden bg-bg-card border-t border-border absolute w-full left-0 shadow-lg animate-slide-down origin-top animate-on-scroll translate-y-0 transition-transform duration-300">
     <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
       @for (item of navItems; track $index) {
       <a [routerLink]="item.path" (click)="closeMenu()"
         routerLinkActive="bg-primary/10 text-primary border-l-4 border-primary"
         [routerLinkActiveOptions]="{exact: true}"
-        class="block px-3 py-3 rounded-r-md text-base font-medium text-text-main hover:text-primary hover:bg-bg-app transition-all duration-200">
+        class="block px-3 py-3 sm:py-4 rounded-r-md text-sm sm:text-base font-medium text-text-main hover:text-primary hover:bg-bg-app transition-all duration-200">
         {{ item.label }}
       </a>
       }

@@ -1,6 +1,8 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { LocalStorageService } from '../../../core/services/local-storage.service';
 import { Note } from '../../../shared/models/note.model';
+import { sortByDate } from '../../../shared/utils/sort.utils';
+import { generateId, findById, updateById, filterById, prependItem } from '../../../shared/utils/common.utils';
 
 const STORE = 'notes';
 
@@ -8,55 +10,33 @@ const STORE = 'notes';
 export class NotesService {
    private localStorage = inject(LocalStorageService);
    notes = signal<Note[]>([]);
-   private isInitialized = false;
 
    constructor() {
       this.initialize();
    }
 
-   private async initialize() {
-      if (this.isInitialized) return;
+   private initialize() {
+      const all = this.localStorage.getAll<Note>(STORE);
+      this.notes.set(sortByDate(all));
+   }
 
-      try {
-         const all = this.localStorage.getAll<Note>(STORE);
-         this.notes.set(all.sort((a, b) =>
-            new Date(b.date).getTime() - new Date(a.date).getTime()
-         ));
-         this.isInitialized = true;
-      } catch (error) {
-         console.error('[NotesService] Initialization error:', error);
+   addOrUpdate(note: Note) {
+      const exists = findById(this.notes(), note.id);
+      if (exists) {
+         this.localStorage.update(STORE, note);
+         this.notes.set(updateById(this.notes(), note));
+      } else {
+         this.localStorage.add(STORE, note);
+         this.notes.set(prependItem(this.notes(), note));
       }
    }
 
-   async addOrUpdate(note: Note) {
-      if (!this.isInitialized) await this.initialize();
-
-      try {
-         const exists = this.notes().some(n => n.id === note.id);
-         if (exists) {
-            this.localStorage.update(STORE, note);
-            this.notes.update(list => list.map(n => n.id === note.id ? note : n));
-         } else {
-            this.localStorage.add(STORE, note);
-            this.notes.update(list => [note, ...list]);
-         }
-      } catch (error) {
-         console.error('[NotesService] Error saving note:', error);
-         throw error;
-      }
-   }
-
-   async delete(id: string) {
-      if (!this.isInitialized) await this.initialize();
+   delete(id: string) {
       this.localStorage.delete(STORE, id);
-      this.notes.update(list => list.filter(n => n.id !== id));
+      this.notes.set(filterById(this.notes(), id));
    }
 
    createNote(date: string, content: string): Note {
-      return {
-         id: crypto.randomUUID(),
-         date,
-         content
-      };
+      return { id: generateId(), date, content };
    }
 }

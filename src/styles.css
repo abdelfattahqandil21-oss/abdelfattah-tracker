@@ -31,7 +31,21 @@ body {
    background-color: var(--color-bg-app);
    color: var(--color-text-main);
    font-family: var(--font-body) !important;
+   font-size: 14px;
+   line-height: 1.5;
    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+@media (min-width: 640px) {
+   body {
+      font-size: 15px;
+   }
+}
+
+@media (min-width: 768px) {
+   body {
+      font-size: 16px;
+   }
 }
 
 h1,
@@ -44,6 +58,127 @@ h6,
    font-family: var(--font-display);
 }
 
+h1 {
+   font-size: 1.5rem;
+   line-height: 2rem;
+}
+
+@media (min-width: 640px) {
+   h1 {
+      font-size: 1.75rem;
+      line-height: 2.25rem;
+   }
+}
+
+@media (min-width: 768px) {
+   h1 {
+      font-size: 2rem;
+      line-height: 2.5rem;
+   }
+}
+
+h2 {
+   font-size: 1.25rem;
+   line-height: 1.75rem;
+}
+
+@media (min-width: 640px) {
+   h2 {
+      font-size: 1.5rem;
+      line-height: 2rem;
+   }
+}
+
+@media (min-width: 768px) {
+   h2 {
+      font-size: 1.75rem;
+      line-height: 2.25rem;
+   }
+}
+
+h3 {
+   font-size: 1.125rem;
+   line-height: 1.5rem;
+}
+
+@media (min-width: 640px) {
+   h3 {
+      font-size: 1.25rem;
+      line-height: 1.75rem;
+   }
+}
+
+@media (min-width: 768px) {
+   h3 {
+      font-size: 1.5rem;
+      line-height: 2rem;
+   }
+}
+
 .font-script {
    font-family: var(--font-script);
+}
+
+/* Responsive utilities */
+.touch-target {
+   min-height: 44px;
+   min-width: 44px;
+}
+
+@media (min-width: 768px) {
+   .touch-target {
+      min-height: 48px;
+      min-width: 48px;
+   }
+}
+
+/* Better mobile spacing */
+.mobile-tight {
+   padding: 0.5rem;
+}
+
+@media (min-width: 640px) {
+   .mobile-tight {
+      padding: 0.75rem;
+   }
+}
+
+@media (min-width: 768px) {
+   .mobile-tight {
+      padding: 1rem;
+   }
+}
+
+/* Mobile-friendly cards */
+.mobile-card {
+   padding: 0.75rem;
+   border-radius: 0.5rem;
+}
+
+@media (min-width: 640px) {
+   .mobile-card {
+      padding: 1rem;
+      border-radius: 0.75rem;
+   }
+}
+
+@media (min-width: 768px) {
+   .mobile-card {
+      padding: 1.25rem;
+      border-radius: 0.75rem;
+   }
+}
+
+/* Responsive text truncation */
+.text-truncate-mobile {
+   overflow: hidden;
+   text-overflow: ellipsis;
+   white-space: nowrap;
+}
+
+@media (min-width: 768px) {
+   .text-truncate-mobile {
+      white-space: normal;
+      overflow: visible;
+   }
 }

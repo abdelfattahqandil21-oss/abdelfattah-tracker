@@ -1,6 +1,8 @@
 import { Injectable, signal, inject, computed } from '@angular/core';
 import { LocalStorageService } from '../../../core/services/local-storage.service';
 import { SugarEntry, Meal, Timing } from '../../../shared/models/sugar-entry.model';
+import { sortByDate } from '../../../shared/utils/sort.utils';
+import { generateId, findById, updateById, filterById, prependItem } from '../../../shared/utils/common.utils';
 
 const STORE = 'sugar-entries';
 
@@ -8,80 +10,41 @@ const STORE = 'sugar-entries';
 export class SugarService {
   private localStorage = inject(LocalStorageService);
   private _entries = signal<SugarEntry[]>([]);
-  private isInitialized = false;
 
   constructor() {
     this.initialize();
   }
 
-  // Getter for entries signal
   get entries() {
     return this._entries.asReadonly();
   }
 
-  // Setter for entries (updates the signal)
   set entriesData(data: SugarEntry[]) {
     this._entries.set(data);
   }
 
-  private async initialize() {
-    if (this.isInitialized) return;
+  private initialize() {
+    const all = this.localStorage.getAll<SugarEntry>(STORE);
+    this.entriesData = sortByDate(all);
+  }
 
-    try {
-      console.log('[SugarService] Initializing local storage...');
-      const all = this.localStorage.getAll<SugarEntry>(STORE);
-      console.log(`[SugarService] Loaded ${all.length} entries`);
-
-      this.entriesData = all.sort((a, b) =>
-        new Date(b.date).getTime() - new Date(a.date).getTime()
-      );
-
-      this.isInitialized = true;
-      console.log('[SugarService] Initialization complete');
-    } catch (error) {
-      console.error('[SugarService] Initialization error:', error);
-      throw error;
+  addOrUpdate(entry: SugarEntry) {
+    const exists = findById(this._entries(), entry.id);
+    if (exists) {
+      this.localStorage.update(STORE, entry);
+      this._entries.set(updateById(this._entries(), entry));
+    } else {
+      this.localStorage.add(STORE, entry);
+      this._entries.set(prependItem(this._entries(), entry));
     }
   }
 
-  async addOrUpdate(entry: SugarEntry) {
-    if (!this.isInitialized) {
-      await this.initialize();
-    }
-
-    try {
-      const currentEntries = this._entries();
-      const exists = currentEntries.some(e => e.id === entry.id);
-
-      if (exists) {
-        console.log('[SugarService] Updating existing entry:', entry);
-        this.localStorage.update(STORE, entry);
-        this._entries.update(list =>
-          list.map(e => e.id === entry.id ? entry : e)
-        );
-      } else {
-        console.log('[SugarService] Adding new entry:', entry);
-        this.localStorage.add(STORE, entry);
-        this._entries.update(list => [entry, ...list]);
-      }
-
-      return true;
-    } catch (error) {
-      console.error('[SugarService] Error in addOrUpdate:', error);
-      throw error;
-    }
-  }
-
-  async remove(id: string) {
+  remove(id: string) {
     this.localStorage.delete(STORE, id);
-    this._entries.update(list => list.filter(e => e.id !== id));
+    this._entries.set(filterById(this._entries(), id));
   }
 
-  async getLast14Days(): Promise<SugarEntry[]> {
-    if (!this.isInitialized) {
-      await this.initialize();
-    }
-
+  getLast14Days(): SugarEntry[] {
     const today = new Date();
     return this._entries().filter(e => {
       const entryDate = new Date(e.date);
@@ -92,7 +55,7 @@ export class SugarService {
 
   createEntry(date: string, meal: Meal, timing: Timing): SugarEntry {
     return {
-      id: crypto.randomUUID(),
+      id: generateId(),
       date,
       meal,
       timing,
