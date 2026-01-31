@@ -1,13 +1,12 @@
 import { Injectable, signal, inject, computed } from '@angular/core';
-import { IDBService } from '../../../core/services/idb.service';
+import { LocalStorageService } from '../../../core/services/local-storage.service';
 import { SugarEntry, Meal, Timing } from '../../../shared/models/sugar-entry.model';
 
-const DB = 'sugar-tracker-db';
 const STORE = 'sugar-entries';
 
 @Injectable({ providedIn: 'root' })
 export class SugarService {
-  private idb = inject(IDBService);
+  private localStorage = inject(LocalStorageService);
   private _entries = signal<SugarEntry[]>([]);
   private isInitialized = false;
 
@@ -29,11 +28,8 @@ export class SugarService {
     if (this.isInitialized) return;
 
     try {
-      console.log('[SugarService] Initializing database...');
-      await this.idb.open(DB, STORE);
-      console.log('[SugarService] Database opened successfully');
-
-      const all = await this.idb.getAll<SugarEntry>(STORE);
+      console.log('[SugarService] Initializing local storage...');
+      const all = this.localStorage.getAll<SugarEntry>(STORE);
       console.log(`[SugarService] Loaded ${all.length} entries`);
 
       this.entriesData = all.sort((a, b) =>
@@ -59,13 +55,13 @@ export class SugarService {
 
       if (exists) {
         console.log('[SugarService] Updating existing entry:', entry);
-        await this.idb.update(STORE, entry);
+        this.localStorage.update(STORE, entry);
         this._entries.update(list =>
           list.map(e => e.id === entry.id ? entry : e)
         );
       } else {
         console.log('[SugarService] Adding new entry:', entry);
-        await this.idb.add(STORE, entry);
+        this.localStorage.add(STORE, entry);
         this._entries.update(list => [entry, ...list]);
       }
 
@@ -77,7 +73,7 @@ export class SugarService {
   }
 
   async remove(id: string) {
-    await this.idb.delete(STORE, id);
+    this.localStorage.delete(STORE, id);
     this._entries.update(list => list.filter(e => e.id !== id));
   }
 

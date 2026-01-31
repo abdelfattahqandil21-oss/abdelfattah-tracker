@@ -1,13 +1,12 @@
 import { Injectable, signal, inject, computed } from '@angular/core';
-import { IDBService } from '../../../core/services/idb.service';
+import { LocalStorageService } from '../../../core/services/local-storage.service';
 import { Task, TaskType, TaskStatus } from '../../../shared/models/task.model';
 
-const DB = 'venofy-tracker-db';
 const STORE = 'tasks';
 
 @Injectable({ providedIn: 'root' })
 export class TasksService {
-  private idb = inject(IDBService);
+  private localStorage = inject(LocalStorageService);
   tasks = signal<Task[]>([]);
   private isInitialized = false;
 
@@ -19,8 +18,7 @@ export class TasksService {
     if (this.isInitialized) return;
 
     try {
-      await this.idb.open(DB, STORE);
-      const all = await this.idb.getAll<Task>(STORE);
+      const all = this.localStorage.getAll<Task>(STORE);
       this.tasks.set(all.sort((a, b) =>
         new Date(b.date).getTime() - new Date(a.date).getTime()
       ));
@@ -36,10 +34,10 @@ export class TasksService {
     try {
       const exists = this.tasks().some(t => t.id === task.id);
       if (exists) {
-        await this.idb.update(STORE, task);
+        this.localStorage.update(STORE, task);
         this.tasks.update(list => list.map(t => t.id === task.id ? task : t));
       } else {
-        await this.idb.add(STORE, task);
+        this.localStorage.add(STORE, task);
         this.tasks.update(list => [task, ...list]);
       }
     } catch (error) {
@@ -50,7 +48,7 @@ export class TasksService {
 
   async delete(id: string) {
     if (!this.isInitialized) await this.initialize();
-    await this.idb.delete(STORE, id);
+    this.localStorage.delete(STORE, id);
     this.tasks.update(list => list.filter(t => t.id !== id));
   }
 
