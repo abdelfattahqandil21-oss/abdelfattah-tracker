@@ -27,18 +27,19 @@ export const routes: Routes = [
         (m) => m.TasksComponent
       ),
   },
-  {
-    path: 'evaluations',
-    loadComponent: () =>
-      import('./features/evaluations/evaluations.component').then(
-        (m) => m.EvaluationsComponent
-      ),
-  },
+
   {
     path: 'notes',
     loadComponent: () =>
       import('./features/notes/notes.component').then(
         (m) => m.NotesComponent
+      ),
+  },
+  {
+    path: 'pomodoro',
+    loadComponent: () =>
+      import('./features/pomodoro/pomodoro-page.component').then(
+        (m) => m.PomodoroPageComponent
       ),
   },
 ];

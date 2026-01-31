@@ -16,8 +16,8 @@ export class HeaderComponent {
     { path: '/main', label: 'Dashboard' },
     { path: '/sugar-tracker', label: 'Sugar' },
     { path: '/tasks', label: 'Tasks' },
-    { path: '/evaluations', label: 'Evaluations' },
     { path: '/notes', label: 'Notes' },
+    { path: '/pomodoro', label: 'Pomodoro' },
   ];
 
   toggleMenu() {

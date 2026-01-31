@@ -1,7 +1,6 @@
 import { Injectable, inject, computed, signal } from '@angular/core';
 import { SugarService } from '../../../sugar-tracker/services/sugar.service';
 import { TasksService } from '../../../tasks/services/tasks.service';
-import { EvaluationsService } from '../../../evaluations/services/evaluations.service';
 import { NotesService } from '../../../notes/services/notes.service';
 
 export interface TodaySummary {
@@ -49,7 +48,6 @@ export interface ChartData {
 export class OverviewService {
    private sugarService = inject(SugarService);
    private tasksService = inject(TasksService);
-   private evaluationsService = inject(EvaluationsService);
    private notesService = inject(NotesService);
 
    // ========== TODAY'S SUMMARY ==========
@@ -206,24 +204,7 @@ export class OverviewService {
       return { total, completed, pending, completionRate };
    });
 
-   // ========== EVAL STATS ==========
-   evalStats = computed(() => {
-      const evals = this.evaluationsService.evaluations();
-      if (evals.length === 0) return { activity: '0.0', health: '0.0', productivity: '0.0' };
 
-      const getAvg = (type: string) => {
-         const typeEvals = evals.filter(e => e.type === type);
-         return typeEvals.length > 0
-            ? (typeEvals.reduce((acc, curr) => acc + curr.score, 0) / typeEvals.length).toFixed(1)
-            : '0.0';
-      };
-
-      return {
-         activity: getAvg('activity'),
-         health: getAvg('health'),
-         productivity: getAvg('productivity')
-      };
-   });
 
    // ========== CHART DATA ==========
    chartData = computed<ChartData>(() => {

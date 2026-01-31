@@ -1,0 +1,65 @@
+<app-header></app-header>
+
+<div class="w-full max-w-5xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="font-display text-xl sm:text-2xl font-bold text-primary tracking-wide">Pomodoro Focus</h1>
+      <p class="text-xs sm:text-sm text-text-muted mt-1">Stay focused with structured work & break sessions.</p>
+    </div>
+    <app-pomodoro-session-type-switcher
+      [activeType]="facade.type()"
+      (typeChange)="facade.setType($event)" />
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
+    <div class="md:col-span-2 space-y-4">
+      <app-pomodoro-timer-display
+        [time]="facade.formattedTime()"
+        [label]="facade.type() === 'focus' ? 'Focus Session' : (facade.type() === 'shortBreak' ? 'Short Break' : 'Long Break')"
+        [progress]="facade.progress()"
+        (timeClick)="onTimeClick()" />
+
+      <app-pomodoro-timer-controls
+        [isRunning]="isRunning"
+        (onStart)="facade.start()"
+        (onPause)="facade.pause()"
+        (onReset)="facade.reset()" />
+    </div>
+
+    <div class="space-y-4">
+      <app-pomodoro-stats-summary
+        [focusSessions]="facade.todayStats().focusSessions"
+        [totalFocusMinutes]="facade.todayStats().totalFocusMinutes"
+        [totalSessions]="facade.todayStats().totalSessions" />
+    </div>
+  </div>
+</div>
+
+<app-modal
+  [isOpen]="isTimeModalOpen()"
+  [title]="'Set Session Minutes'"
+  [showFooter]="true"
+  (close)="closeTimeModal()">
+  <div class="space-y-3">
+    <label class="block text-xs font-semibold tracking-wide text-text-muted">Minutes</label>
+    <input
+      type="number"
+      min="1"
+      class="w-full rounded-lg border border-border bg-bg-input px-3 py-2 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+      [value]="timeInput()"
+      (input)="onTimeInputChange($any($event.target).value)" />
+  </div>
+
+  <div modal-footer>
+    <button type="button"
+      class="px-3 py-1.5 rounded-full border border-border text-xs font-semibold tracking-wide text-text-muted hover:text-text-main hover:bg-bg-app transition-colors"
+      (click)="closeTimeModal()">
+      Cancel
+    </button>
+    <button type="button"
+      class="px-4 py-1.5 rounded-full bg-primary text-white text-xs font-semibold tracking-wide shadow-sm hover:bg-primary-dark transition-colors"
+      (click)="saveTime()">
+      Save
+    </button>
+  </div>
+</app-modal>
