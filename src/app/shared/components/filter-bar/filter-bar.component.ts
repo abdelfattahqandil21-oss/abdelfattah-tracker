@@ -21,42 +21,46 @@ export interface FilterSection {
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="bg-bg-card p-4 rounded-lg border border-border">
-      <div class="flex flex-wrap gap-6 items-start justify-between">
-        
-        @for (section of sections(); track section.label) {
-          <div class="space-y-2">
-            <label class="text-xs font-bold text-text-muted uppercase tracking-wider flex items-center gap-1">
-              <i class="pi {{ section.icon }} text-primary"></i>
-              {{ section.label }}
-            </label>
-            <div class="flex gap-1">
-              @for (option of section.options; track option.value) {
-                <button 
-                  (click)="section.change.emit(option.value)"
-                  class="px-4 py-2 rounded-lg text-sm font-medium transition-colors border"
-                  [class.bg-primary]="section.activeValue === option.value"
-                  [class.text-text-inverse]="section.activeValue === option.value"
-                  [class.border-primary]="section.activeValue === option.value"
-                  [class.bg-bg-app]="section.activeValue !== option.value"
-                  [class.text-text-main]="section.activeValue !== option.value"
-                  [class.border-border]="section.activeValue !== option.value"
-                  [class.hover:border-primary]="section.activeValue !== option.value">
-                  {{ option.label }}
-                </button>
-              }
-            </div>
-          </div>
+  <div class="flex flex-col gap-6 md:flex-row md:flex-wrap md:items-start md:justify-between">
+    
+    @for (section of sections(); track section.label) {
+      <div class="space-y-2">
+        <label class="text-xs font-bold text-text-muted uppercase tracking-wider flex items-center gap-1">
+          <i class="pi {{ section.icon }} text-primary"></i>
+          {{ section.label }}
+        </label>
 
-          @if (!isLast(section)) {
-            <div class="hidden md:block w-px h-12 bg-border self-center"></div>
+        <div class="flex flex-wrap gap-2">
+          @for (option of section.options; track option.value) {
+            <button 
+              (click)="section.change.emit(option.value)"
+              class="px-4 py-2 rounded-lg text-sm font-medium transition-colors border"
+              [class.bg-primary]="section.activeValue === option.value"
+              [class.text-text-inverse]="section.activeValue === option.value"
+              [class.border-primary]="section.activeValue === option.value"
+              [class.bg-bg-app]="section.activeValue !== option.value"
+              [class.text-text-main]="section.activeValue !== option.value"
+              [class.border-border]="section.activeValue !== option.value"
+              [class.hover:border-primary]="section.activeValue !== option.value">
+              {{ option.label }}
+            </button>
           }
-        }
-
-        @if (customContent()) {
-          <ng-content></ng-content>
-        }
+        </div>
       </div>
-    </div>
+
+      @if (!isLast(section)) {
+        <div class="hidden md:block w-px h-12 bg-border self-center"></div>
+      }
+    }
+
+    @if (customContent()) {
+      <div class="w-full md:w-auto">
+        <ng-content></ng-content>
+      </div>
+    }
+  </div>
+</div>
+
   `
 })
 export class FilterBarComponent {
