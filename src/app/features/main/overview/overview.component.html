@@ -54,14 +54,12 @@
    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
    <app-tasks-chart-card [completed]="service.taskStats().completed" [pending]="service.taskStats().pending"
       [completionRate]="service.taskStats().completionRate" />
-   <app-evaluations-card [stats]="service.evalStats()" />
    <app-notes-preview-card [notes]="service.recentNotes()" />
 </div>
 }@placeholder {
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6">
    <app-tasks-chart-card [completed]="service.taskStats().completed" [pending]="service.taskStats().pending"
       [completionRate]="service.taskStats().completionRate" />
-   <app-evaluations-card [stats]="service.evalStats()" />
    <app-notes-preview-card [notes]="service.recentNotes()" />
 </div>
 }

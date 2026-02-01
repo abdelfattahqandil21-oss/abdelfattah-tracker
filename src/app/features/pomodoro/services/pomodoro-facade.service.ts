@@ -1,9 +1,13 @@
-import { Injectable, inject, computed } from '@angular/core';
+import { Injectable, inject, computed, signal } from '@angular/core';
 import { PomodoroTimerService } from './pomodoro-timer.service';
 import { PomodoroStorageService } from './pomodoro-storage.service';
 import { PomodoroStatsService } from './pomodoro-stats.service';
+import { PomodoroTaskNoteService } from './pomodoro-task-note.service';
+import { TasksService } from '../../tasks/services/tasks.service';
+import { NotesService } from '../../notes/services/notes.service';
 import { PomodoroSession, PomodoroSessionType } from '../models/pomodoro-session.model';
 import { PomodoroSettings } from '../models/pomodoro-settings.model';
+import { Task, Note } from '../../../shared/models/pomodoro-task-note.model';
 import { generateId } from '../../../shared/utils/common.utils';
 
 @Injectable({ providedIn: 'root' })
@@ -11,6 +15,8 @@ export class PomodoroFacadeService {
   private timer = inject(PomodoroTimerService);
   private storage = inject(PomodoroStorageService);
   private stats = inject(PomodoroStatsService);
+  private taskNoteService = inject(PomodoroTaskNoteService);
+  private tasksService = inject(TasksService);
 
   readonly type = this.timer.type;
   readonly state = this.timer.timerState;
@@ -20,6 +26,10 @@ export class PomodoroFacadeService {
   readonly focusCompleted = this.timer.focusCompleted;
 
   readonly todayStats = this.stats.todayStats;
+
+  // Current session task selection
+  private currentSessionTaskId = signal<string>('');
+  readonly currentSessionTaskIdRO = this.currentSessionTaskId.asReadonly();
 
   readonly formattedTime = computed(() => {
     const totalSeconds = this.timer.remaining();
@@ -89,6 +99,42 @@ export class PomodoroFacadeService {
     };
 
     this.stats.addSession(session);
+
+    // Create link to task if selected
+    const taskId = this.currentSessionTaskId();
+    
+    if (taskId) {
+      this.taskNoteService.createLink(session.id, taskId);
+    }
+  }
+
+  // Task management methods
+  setCurrentSessionTaskNote(taskId?: string) {
+    this.currentSessionTaskId.set(taskId || '');
+  }
+
+  getCurrentSessionTaskNote() {
+    return {
+      taskId: this.currentSessionTaskIdRO()
+    };
+  }
+
+  clearCurrentSessionTaskNote() {
+    this.currentSessionTaskId.set('');
+  }
+
+  // Get sessions with task details
+  getSessionsWithDetails() {
+    const sessions = this.stats.sessions();
+    const tasks: Task[] = this.tasksService.tasks();
+    
+    return this.taskNoteService.getPomodoroSessionsWithDetails(sessions, tasks, []);
+  }
+
+  // Get suggested tasks
+  getSuggestedTasks() {
+    const tasks: Task[] = this.tasksService.tasks();
+    return this.taskNoteService.getSuggestedTasks(tasks);
   }
 
   saveTimerState() {

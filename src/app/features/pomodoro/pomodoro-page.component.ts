@@ -4,6 +4,7 @@ import { TimerDisplayComponent } from './components/timer-display.component';
 import { TimerControlsComponent } from './components/timer-controls.component';
 import { SessionTypeSwitcherComponent } from './components/session-type-switcher.component';
 import { StatsSummaryComponent } from './components/stats-summary.component';
+import { PomodoroTaskSelectorComponent } from './components/pomodoro-task-note-selector.component';
 import { PomodoroFacadeService } from './services/pomodoro-facade.service';
 import { ModalComponent } from '../../shared/components/modal/modal.component';
 
@@ -19,6 +20,9 @@ export class PomodoroPageComponent implements OnInit, OnDestroy {
   isTimeModalOpen = signal(false);
   timeInput = signal<string>('');
   private unloadListener: ((event: BeforeUnloadEvent) => void) | null = null;
+
+  // Task selection
+  selectedTaskId = signal<string>('');
 
   ngOnInit() {
     this.facade.loadSettings();
@@ -43,6 +47,12 @@ export class PomodoroPageComponent implements OnInit, OnDestroy {
   private onBeforeUnload(event: BeforeUnloadEvent) {
     // Save timer state when user is leaving the page
     this.facade.saveTimerState();
+  }
+
+  // Task selection handlers
+  onTaskSelectionChange(selection: {taskId?: string}) {
+    this.selectedTaskId.set(selection.taskId || '');
+    this.facade.setCurrentSessionTaskNote(selection.taskId);
   }
 
   get isRunning() {

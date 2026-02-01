@@ -17,7 +17,9 @@
         [time]="facade.formattedTime()"
         [label]="facade.type() === 'focus' ? 'Focus Session' : (facade.type() === 'shortBreak' ? 'Short Break' : 'Long Break')"
         [progress]="facade.progress()"
-        (timeClick)="onTimeClick()" />
+        [selectedTaskId]="selectedTaskId()"
+        (timeClick)="onTimeClick()"
+        (taskSelectionChange)="onTaskSelectionChange($event)" />
 
       <app-pomodoro-timer-controls
         [isRunning]="isRunning"

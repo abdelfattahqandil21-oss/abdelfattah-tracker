@@ -8,7 +8,6 @@ import { SugarChartCardComponent } from './components/sugar-chart-card.component
 import { AvgChartCardComponent } from './components/avg-chart-card.component';
 import { CalendarHeatmapCardComponent } from './components/calendar-heatmap-card.component';
 import { TasksChartCardComponent } from './components/tasks-chart-card.component';
-import { EvaluationsCardComponent } from './components/evaluations-card.component';
 import { NotesPreviewCardComponent } from './components/notes-preview-card.component';
 import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 
@@ -24,7 +23,6 @@ import { LoadingSpinnerComponent } from '../../../shared/components/loading-spin
     AvgChartCardComponent,
     CalendarHeatmapCardComponent,
     TasksChartCardComponent,
-    EvaluationsCardComponent,
     NotesPreviewCardComponent,
     LoadingSpinnerComponent
   ],
